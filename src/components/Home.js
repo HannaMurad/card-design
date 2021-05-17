@@ -2,8 +2,8 @@ import React from 'react'
 
 import { Badge, Button, Card, CardColumns, CardDeck, CardGroup, Carousel, Container, Form, FormControl, Nav, Navbar, NavDropdown, Row } from 'react-bootstrap';
 
-import slider1 from './images/slider1.jpg'
-import slider2 from './images/slider2.jpg'
+import slider1 from '../images/slider1.jpg'
+import slider2 from '../images/slider2.jpg'
 
 function Home() {
     return (

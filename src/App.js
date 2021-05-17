@@ -1,61 +1,74 @@
 import './App.css';
 import { Badge, Button, Card, CardColumns, CardDeck, CardGroup, Carousel, Container, Form, FormControl, Nav, Navbar, NavDropdown, Row } from 'react-bootstrap';
-import React, { useState } from 'react'
-import Axios from 'axios'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
-import Navigator from './Navigator';
-import Home from './Home';
-import Rings from './Rings';
-import AllRings from './AllRings';
-import OnSale from './OnSale';
-import InsStock from './InStock';
-import Cart from './Cart';
+import Navigator from './components/Navigator';
+import Home from './components/Home';
+import Rings from './components/Rings';
+
+import Cart from './components/Cart';
 
 import { Route,  BrowserRouter as Router, Switch } from 'react-router-dom';
-import Ring from './Ring';
-import InStock from './InStock';
-import Search from './Search';
+
 
 const CURRENCY_API = "https://api.exchangeratesapi.io/v1/latest";
 
 function App() {
 
-  const cartApi = (url ="http://localhost:6600/cart") => {
+  const [cart, setCart] = useState([{Amount:0, Diamond : {Name: "", Price: 0, Description:""}}]);
+  const [cartUpdate, setCartUpdate] = useState(false);
+  const [itemsCount, setItemsCount] = useState(0);
+
+  const fetchRings = (passedParams) => {
+    return axios.get("http://localhost:6600/rings", {params : {
+      onSale: passedParams.onSale ?? false,
+      instock: passedParams.inStock ?? false,
+      search: passedParams.search ?? false,
+      searchValue: passedParams.searchValue ?? ""
+    }});
+  }
+
+  const cartApi = (url ="http://localhost:6600/shoppingcart") => {
         return{
-            fetchAll : () => Axios.get(url),
-            create : (newItem) => Axios.post(url, newItem),
-            update : (id, updatedItem) => Axios.put(url + id, updatedItem),
-            delete : (id) => Axios.delete(url + id)
+            fetchAll : async () => await axios.get(url).then(res => setCart(res.data)),
+              //promise().then((response) => {setCart(response.data)})
+            add : async (ringId) => await axios.post(url, null, {params : {diamondId: ringId}}).then((response) => {setCartUpdate(prev => !prev)}),
+            remove : async (ringId) => await axios.delete(url, {params : {diamondId: ringId}}).then((response) => {setCartUpdate(prev => !prev)})
         }
     }
+  
+  const getItemsCount =  () => cart.reduce((acc, curr) => acc + curr.Amount , 0);
 
-  const getItems = () => {cartApi().fetchAll()}
-  const addItem = newItem => {cartApi().create(newItem)}
+  const update = () => setCartUpdate(prev => !prev);
+  /*const cartApi = (url ="http://localhost:6600/cart") => {
+        return{
+            fetchAll : () => axios.get(url),
+            create : (newItem) => axios.post(url, newItem),
+            update : (id, updatedItem) => axios.put(url + id, updatedItem),
+            delete : (id) => axios.delete(url + id)
+        }
+    }*/
+
+    useEffect(() => {
+      cartApi().fetchAll();
+    }, [cartUpdate]);
 
   return (
     <>
-      <Navigator/>
+      <Navigator getItemsCount={getItemsCount}/>
       <Router>
         <Switch>
           <Route exact path="/" >
             <Home />
           </Route>
-          <Route exact path="/rings" >
-            <AllRings/>
-          </Route>
-          <Route exact path="/onsale" >
-            <OnSale/>
-          </Route>
-          <Route exact path="/instock" >
-            <InStock/>
-          </Route>
-          <Route exact path="/search" >
-            <Search/>
+          <Route exact path="/rings/:filter" >
+            <Rings fetchRings={fetchRings} cartApi={cartApi}/>
           </Route>
           <Route exact path="/cart" > 
-            <Cart/>
+            <Cart cart={cart} cartApi={cartApi}/>
           </Route>
-        </Switch>n
+        </Switch>
       </Router>
     </>
   );

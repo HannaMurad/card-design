@@ -4,34 +4,19 @@ import { Table, Button } from 'react-bootstrap'
 import {ImPlus} from 'react-icons/im'
 import {ImMinus} from 'react-icons/im'
 
-function Cart() {
+function Cart({cart, cartApi}) {
 
-    const cartApi = (url ="http://localhost:6600/shoppingcart") => {
-        return{
-            fetchAll : () => axios.get(url),
-            add : async (ringId) => await axios.post(url, null, {params : {diamondId: ringId}}),
-            remove : async (ringId) => await axios.delete(url, {params : {diamondId: ringId}})
-        }
-    }
-
-    const [items, setItems] = useState([{Amount:0, Diamond : {Name: "", Price: 0, Description:""}}]);
-    const [cartUpdate, setCartUpdate] = useState(true);
-    
-    
     useEffect(() => {
-        console.log("entered use effect")
-            cartApi().fetchAll().then((response) => {
-                setItems(response.data);
-                //console.log(response.data);
-            });
-        },[cartUpdate]);
+           //cartApi().fetchAll();
+           console.log(cart);
+        },[]);
 
     const addItem = async (ringId) => {
-        await cartApi().add(ringId).then((response) => {setCartUpdate(prev => !prev)});  
+        await cartApi().add(ringId);  
     }
 
     const deleteItem = async (ringId) => {
-        await cartApi().remove(ringId).then((response) => {setCartUpdate(prev => !prev)});
+        await cartApi().remove(ringId);
     }
 
     return (
@@ -47,7 +32,7 @@ function Cart() {
                 </tr>
             </thead>
             <tbody>
-                {items.map((variant, idx) => (
+                {cart.map((variant, idx) => (
                     <tr key={idx} >
                     <td >{variant.Diamond.Name}</td>
                     <td >{variant.Diamond.Price}</td>

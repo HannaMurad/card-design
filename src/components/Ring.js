@@ -4,20 +4,11 @@ import axios from 'axios'
 import { Badge, Button, Card, CardColumns, CardDeck, CardGroup, Carousel, Container, Form, FormControl, Nav, Navbar, NavDropdown, Row } from 'react-bootstrap';
 
 
-function Ring({variant, idx}) {
+function Ring({variant, idx, cartApi}) {
 
-    const cartApi = (url ="http://localhost:6600/shoppingcart") => {
-        return{
-            fetchAll : () => axios.get(url),
-            add : (ringId) => axios.post(url, null, {params : {diamondId: ringId}}),
-            delete : (ringId) => axios.delete(url, null, {params : {diamondId: ringId}})
-        }
-    }
-
-    const addItem = (ringId) => {
-        cartApi().add(ringId).then(res => console.log(res.data));
-
-    }
+    const addItem = async (ringId) => (
+        await cartApi().add(ringId)
+    );
 
     return (
         <Card key={idx} style={{ width: '18rem'}}  className="m-3 card">
@@ -34,7 +25,7 @@ function Ring({variant, idx}) {
                     <Card.Text>
                     {variant.Description}
                     </Card.Text>
-                    <Button variant="primary" onClick={() => {addItem(variant.DiamondId)}}>Add to cart</Button>
+                    <Button variant="primary" onClick={async () => await addItem(variant.DiamondId)}>Add to cart</Button>
                     </Card.Body>
         </Card>
     )
