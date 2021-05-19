@@ -8,7 +8,7 @@ import slider2 from '../images/slider2.jpg'
 function Home() {
     return (
         <div>
-           <Carousel>
+           <Carousel >
             <Carousel.Item>
             <img
                 className="d-block w-100"

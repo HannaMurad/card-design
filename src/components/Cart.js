@@ -46,6 +46,11 @@ function Cart({cart, cartApi}) {
                 ))}
             </tbody>
             </Table>
+            <div className="d-flex justify-content-center">
+                <Button className='m-1' size="lg">Back</Button>
+                <Button className='m-1' size="lg" href="/checkout">Checkout</Button>
+            </div>
+           
         </div>
     )
 }

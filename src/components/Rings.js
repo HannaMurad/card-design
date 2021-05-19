@@ -75,7 +75,8 @@ function Rings({search, fetchRings, cartApi}) {
                     <Ring variant={variant} idx={idx} cartApi={cartApi}/>
                 ))
             } 
-                </Row>  
+            </Row>  
+            
             </Container>
         </>
     )

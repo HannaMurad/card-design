@@ -6,10 +6,12 @@ import axios from 'axios'
 import Navigator from './components/Navigator';
 import Home from './components/Home';
 import Rings from './components/Rings';
+import Checkout from './components/CheckoutForm/Checkout/Checkout';
 
 import Cart from './components/Cart';
 
 import { Route,  BrowserRouter as Router, Switch } from 'react-router-dom';
+
 
 
 const CURRENCY_API = "https://api.exchangeratesapi.io/v1/latest";
@@ -17,6 +19,7 @@ const CURRENCY_API = "https://api.exchangeratesapi.io/v1/latest";
 function App() {
 
   const [cart, setCart] = useState([{Amount:0, Diamond : {Name: "", Price: 0, Description:""}}]);
+  const [order, setOrder] = useState({});
   const [cartUpdate, setCartUpdate] = useState(false);
   const [itemsCount, setItemsCount] = useState(0);
 
@@ -39,6 +42,7 @@ function App() {
     }
   
   const getItemsCount =  () => cart.reduce((acc, curr) => acc + curr.Amount , 0);
+  const getTotal =  () => cart.reduce((acc, curr) => acc + curr.Amount * curr.Diamond.Price, 0)
 
   const update = () => setCartUpdate(prev => !prev);
   /*const cartApi = (url ="http://localhost:6600/cart") => {
@@ -67,6 +71,9 @@ function App() {
           </Route>
           <Route exact path="/cart" > 
             <Cart cart={cart} cartApi={cartApi}/>
+          </Route>
+          <Route exact path="/checkout" > 
+            <Checkout cart={cart} getTotal={getTotal}/>
           </Route>
         </Switch>
       </Router>
